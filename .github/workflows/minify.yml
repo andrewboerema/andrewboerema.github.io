@@ -23,14 +23,18 @@ jobs:
           
       - name: Minify CSS and add hash
         run: |
+          # First minify the CSS
           cleancss -o styles.min.css styles.css
+          # Then calculate hash and rename
           HASH=$(sha256sum styles.min.css | cut -c1-8)
           mv styles.min.css "styles.min.${HASH}.css"
           
       - name: Minify JavaScript and add hash
         run: |
+          # First minify the JavaScript files
           terser script.js -o script.min.js
           terser icons.js -o icons.min.js
+          # Then calculate hashes and rename
           HASH_SCRIPT=$(sha256sum script.min.js | cut -c1-8)
           HASH_ICONS=$(sha256sum icons.min.js | cut -c1-8)
           mv script.min.js "script.min.${HASH_SCRIPT}.js"
@@ -49,8 +53,7 @@ jobs:
             fi
           done
           # Copy the updated HTML back
-          cp index.temp.html index.html
-          rm index.temp.html
+          mv index.temp.html index.html
           
       - name: Commit and push minified files
         run: |
